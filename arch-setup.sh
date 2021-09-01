@@ -16,3 +16,45 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 #
+
+#
+# Internal variables.
+#
+
+_self_name='arch-setup'
+
+#
+# Fuctions for printing coloured output.
+#
+
+print_colour () {
+    if [ $# != 2 ]; then
+        echo 'Function print_colour() expects 2 arguments.'
+        exit
+    fi
+    echo -e "\033[0;${1}m[$SECONDS] ${_self_name}:\033[0m $2"
+}
+
+print_info () {
+    if [ $# != 1 ]; then
+        echo 'Function print_info() expects 1 argument.'
+        exit
+    fi
+    print_colour 33 "$1"
+}
+
+print_section () {
+    if [ $# != 1 ]; then
+        echo 'Function print_section() expects 1 argument.'
+        exit
+    fi
+    print_colour 35 "$1"
+}
+
+print_success () {
+    if [ $# != 1 ]; then
+        echo 'Function print_success() expects 1 argument.'
+        exit
+    fi
+    print_colour 32 "$1"
+}
