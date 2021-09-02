@@ -134,6 +134,21 @@ section_register () {
 }
 
 #
+# Fuctions for common tasks.
+#
+
+# Install a package, if it is not installed alraedy.
+package_install () {
+    if [ $# -ne 1 ]; then
+        print_error 'Function package_install() expects 1 argument.'
+        exit 1
+    fi
+    if ! pacman --query "$1" &> /dev/null; then
+        pacman --sync --needed --noconfirm --quiet "$1"
+    fi
+}
+
+#
 # Start of sections.
 #
 
@@ -143,5 +158,9 @@ install --backup=numbered --compare --owner=root --group=root --mode=0644 \
 install --backup=numbered --compare --owner=root --group=root --mode=0644 \
     pacman/mirrorlist /etc/pacman.d/mirrorlist || exit
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
+
+section_register 'Common_Packages'
+section_check 'Pacman'
+package_install 'bash-completion'
 
 print_info "Finished."
