@@ -158,6 +158,7 @@ install --backup=numbered --compare --owner=root --group=root --mode=0644 \
 install --backup=numbered --compare --owner=root --group=root --mode=0644 \
     pacman/mirrorlist /etc/pacman.d/mirrorlist || exit
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
+pacman --files --noconfirm --refresh --quiet || exit
 
 section_register 'Common_Packages'
 section_check 'Pacman'
