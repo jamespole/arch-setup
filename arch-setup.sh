@@ -30,6 +30,7 @@ fi
 # Internal variables.
 #
 
+_sections=''
 _self_name='arch-setup'
 
 #
@@ -66,4 +67,22 @@ print_success () {
         exit
     fi
     print_colour 32 "$1"
+}
+
+#
+# Functions for creating and checking sections.
+#
+
+section_register () {
+    if [ $#  != 1 ]; then
+        echo 'Function section_register() expects 1 argument.'
+        exit
+    fi
+    for section in ${_sections}; do
+        if [ "$1" = "$section" ]; then
+            echo "Section <$1> already exists."
+            exit
+        fi
+    done
+    _sections+=" $1"
 }
