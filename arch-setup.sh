@@ -51,6 +51,15 @@ print_colour () {
     echo " $2"
 }
 
+# Prints error text.
+print_error () {
+    if [ $# != 1 ]; then
+        echo 'Function print_error() expects 1 argument.'
+        exit 1
+    fi
+    print_colour 31 "$1"
+}
+
 # Prints informational text.
 print_info () {
     if [ $# != 1 ]; then
@@ -85,12 +94,12 @@ print_success () {
 # Checks for section(s), and exits with an error if any have not been registered.
 section_check () {
     if [ $# -eq 0 ]; then
-        echo 'Function section_check() expects at least 1 argument.'
+        print_error 'Function section_check() expects at least 1 argument.'
         exit 1
     fi
     for section_to_check in "$@"; do
         if ! section_exists "${section_to_check}"; then
-            echo "Section <${section_to_check}> has not yet been registered."
+            print_error "Section <${section_to_check}> has not yet been registered."
             exit 1
         fi
     done
@@ -99,7 +108,7 @@ section_check () {
 # Returns whether a section eixsts or not.
 section_exists () {
     if [ $#  != 1 ]; then
-        echo 'Function section_exists() expects 1 argument.'
+        print_error 'Function section_exists() expects 1 argument.'
         exit 1
     fi
     for section in ${_sections}; do
@@ -113,11 +122,11 @@ section_exists () {
 # Register a section, so it can be checked by other sections later.
 section_register () {
     if [ $#  != 1 ]; then
-        echo 'Function section_register() expects 1 argument.'
+        print_error 'Function section_register() expects 1 argument.'
         exit 1
     fi
     if section_exists "$1"; then
-        echo "Section <$1> already exists."
+        print_error "Section <$1> already exists."
         exit 1
     fi
     _sections+=" $1"
