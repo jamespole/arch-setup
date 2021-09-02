@@ -132,3 +132,12 @@ section_register () {
     _sections+=" $1"
     print_section "Section $1"
 }
+
+#
+# Start of sections.
+#
+
+section_register 'Pacman'
+pacman --sync --refresh --sysupgrade --quiet --noconfirm
+
+print_info "Finished."
