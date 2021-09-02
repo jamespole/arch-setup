@@ -27,6 +27,17 @@ if [ "${UID}" -ne 0 ]; then
 fi
 
 #
+# Set certain variables depending on environment.
+#
+
+
+if [[ ${HOSTNAME} == *-laptop ]]; then
+    _laptop='true'
+else
+    _laptop=0
+fi
+
+#
 # Internal variables.
 #
 
@@ -162,7 +173,7 @@ pacman --files --noconfirm --refresh --quiet || exit
 
 section_register 'Vim'
 section_check 'Pacman'
-if [[ ${HOSTNAME} == *-laptop ]]; then
+if [ "${_laptop}" = 'true' ]; then
     package_install 'gvim'
 else
     package_install 'vim'
@@ -174,5 +185,15 @@ package_install 'bash-completion'
 package_install 'jhead'
 package_install 'man-db'
 package_install 'man-pages'
+
+section_register 'Laptop_Packages'
+section_check 'Pacman'
+if [ "${_laptop}" = 'true' ]; then
+    package_install 'firefox'
+    package_install 'gdm'
+    package_install 'gnome-terminal'
+    package_install 'libreoffice-fresh'
+    package_install 'simple-scan'
+fi
 
 print_info 'Finished.'
