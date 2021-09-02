@@ -37,10 +37,13 @@ _self_name='arch-setup'
 # Fuctions for printing coloured output.
 #
 
+# Generic function for printing coloured output.
+# - Argument 1 ($1): Colour number
+# - Argument 2 ($2): Text to be printed
 print_colour () {
     if [ $# != 2 ]; then
         echo 'Function print_colour() expects 2 arguments.'
-        exit
+        exit 1
     fi
     echo -en "\033[0;${1}m"
     echo -n "[$SECONDS] ${_self_name}:"
@@ -48,26 +51,29 @@ print_colour () {
     echo " $2"
 }
 
+# Prints informational text.
 print_info () {
     if [ $# != 1 ]; then
         echo 'Function print_info() expects 1 argument.'
-        exit
+        exit 1
     fi
     print_colour 33 "$1"
 }
 
+# Prints section-related text.
 print_section () {
     if [ $# != 1 ]; then
         echo 'Function print_section() expects 1 argument.'
-        exit
+        exit 1
     fi
     print_colour 35 "$1"
 }
 
+# Prints success text.
 print_success () {
     if [ $# != 1 ]; then
         echo 'Function print_success() expects 1 argument.'
-        exit
+        exit 1
     fi
     print_colour 32 "$1"
 }
