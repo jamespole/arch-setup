@@ -186,14 +186,19 @@ package_install 'jhead'
 package_install 'man-db'
 package_install 'man-pages'
 
-section_register 'Laptop_Packages'
-section_check 'Pacman'
 if [ "${_laptop}" = 'true' ]; then
+    section_register 'Laptop_Packages'
+    section_check 'Pacman'
     package_install 'firefox'
+    package_install 'firefox-i18n-en-gb'
+    package_install 'firefox-ublock-origin'
     package_install 'gdm'
     package_install 'gnome-terminal'
     package_install 'libreoffice-fresh'
+    package_install 'libreoffice-fresh-en-gb'
+    package_install 'signal-desktop'
     package_install 'simple-scan'
+    package_install 'transmission-gtk'
 fi
 
 print_info 'Finished.'
