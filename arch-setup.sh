@@ -162,5 +162,8 @@ pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 section_register 'Common_Packages'
 section_check 'Pacman'
 package_install 'bash-completion'
+package_install 'jhead'
+package_install 'man-db'
+package_install 'man-pages'
 
 print_info 'Finished.'
