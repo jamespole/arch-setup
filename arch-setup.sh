@@ -160,6 +160,14 @@ install --backup=numbered --compare --owner=root --group=root --mode=0644 \
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
+section_register 'Vim'
+section_check 'Pacman'
+if [[ $HOSTNAME == *-laptop ]]; then
+    package_install 'gvim'
+else
+    package_install 'vim'
+fi
+
 section_register 'Common_Packages'
 section_check 'Pacman'
 package_install 'bash-completion'
