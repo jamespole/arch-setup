@@ -144,7 +144,7 @@ package_install () {
         exit 1
     fi
     if ! pacman --query "$1" &> /dev/null; then
-        pacman --sync --needed --noconfirm --quiet "$1"
+        pacman --sync --needed --noconfirm --quiet "$1" || exit
     fi
 }
 
@@ -163,4 +163,4 @@ section_register 'Common_Packages'
 section_check 'Pacman'
 package_install 'bash-completion'
 
-print_info "Finished."
+print_info 'Finished.'
