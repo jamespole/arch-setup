@@ -21,7 +21,7 @@
 # Exit early if not running as root.
 #
 
-if [ $UID -ne 0 ]; then
+if [ "${UID}" -ne 0 ]; then
     echo 'Run this script as root.'
     exit 1
 fi
@@ -46,7 +46,7 @@ print_colour () {
         exit 1
     fi
     echo -en "\033[0;${1}m"
-    echo -n "[$SECONDS] ${_self_name}:"
+    echo -n "[${SECONDS}] ${_self_name}:"
     echo -en "\033[0m"
     echo " $2"
 }
@@ -162,7 +162,7 @@ pacman --files --noconfirm --refresh --quiet || exit
 
 section_register 'Vim'
 section_check 'Pacman'
-if [[ $HOSTNAME == *-laptop ]]; then
+if [[ ${HOSTNAME} == *-laptop ]]; then
     package_install 'gvim'
 else
     package_install 'vim'
