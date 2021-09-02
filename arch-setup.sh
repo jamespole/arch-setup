@@ -76,16 +76,30 @@ print_success () {
 # Functions for creating and checking sections.
 #
 
-section_register () {
+# Returns whether a section eixsts or not.
+section_exists () {
     if [ $#  != 1 ]; then
-        echo 'Function section_register() expects 1 argument.'
-        exit
+        echo 'Function section_exists() expects 1 argument.'
+        exit 1
     fi
     for section in ${_sections}; do
         if [ "$1" = "$section" ]; then
-            echo "Section <$1> already exists."
-            exit
+            return 0
         fi
     done
+    return 1
+}
+
+# Register a section, so it can be checked by other sections later.
+section_register () {
+    if [ $#  != 1 ]; then
+        echo 'Function section_register() expects 1 argument.'
+        exit 1
+    fi
+    if section_exists "$1"; then
+        echo "Section <$1> already exists."
+        exit 1
+    fi
     _sections+=" $1"
+    print_section "Section $1"
 }
