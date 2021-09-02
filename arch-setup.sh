@@ -42,7 +42,10 @@ print_colour () {
         echo 'Function print_colour() expects 2 arguments.'
         exit
     fi
-    echo -e "\033[0;${1}m[$SECONDS] ${_self_name}:\033[0m $2"
+    echo -en "\033[0;${1}m"
+    echo -n "[$SECONDS] ${_self_name}:"
+    echo -en "\033[0m"
+    echo " $2"
 }
 
 print_info () {
