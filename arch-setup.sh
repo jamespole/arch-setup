@@ -82,6 +82,20 @@ print_success () {
 # Functions for creating and checking sections.
 #
 
+# Checks for section(s), and exits with an error if any have not been registered.
+section_check () {
+    if [ $# -eq 0 ]; then
+        echo 'Function section_check() expects at least 1 argument.'
+        exit 1
+    fi
+    for section_to_check in "$@"; do
+        if ! section_exists "${section_to_check}"; then
+            echo "Section <${section_to_check}> has not yet been registered."
+            exit 1
+        fi
+    done
+}
+
 # Returns whether a section eixsts or not.
 section_exists () {
     if [ $#  != 1 ]; then
@@ -89,7 +103,7 @@ section_exists () {
         exit 1
     fi
     for section in ${_sections}; do
-        if [ "$1" = "$section" ]; then
+        if [ "$1" = "${section}" ]; then
             return 0
         fi
     done
