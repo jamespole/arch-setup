@@ -1,0 +1,3 @@
+Server = https://mirror.ece.auckland.ac.nz/archlinux/$repo/os/$arch
+Server = https://mirror.fsmg.org.nz/archlinux/$repo/os/$arch
+Server = https://mirror.2degrees.nz/archlinux/$repo/os/$arch

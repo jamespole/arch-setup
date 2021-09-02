@@ -139,7 +139,9 @@ section_register () {
 
 section_register 'Pacman'
 install --backup=numbered --compare --owner=root --group=root --mode=0644 \
-    pacman/pacman.conf /etc/pacman.conf
-pacman --sync --refresh --sysupgrade --quiet --noconfirm
+    pacman/pacman.conf /etc/pacman.conf || exit
+install --backup=numbered --compare --owner=root --group=root --mode=0644 \
+    pacman/mirrorlist /etc/pacman.d/mirrorlist || exit
+pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 
 print_info "Finished."
