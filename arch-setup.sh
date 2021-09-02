@@ -23,7 +23,7 @@
 
 if [ $UID -ne 0 ]; then
     echo 'Run this script as root.'
-    exit
+    exit 1
 fi
 
 #
@@ -41,7 +41,7 @@ _self_name='arch-setup'
 # - Argument 1 ($1): Colour number
 # - Argument 2 ($2): Text to be printed
 print_colour () {
-    if [ $# != 2 ]; then
+    if [ $# -ne 2 ]; then
         echo 'Function print_colour() expects 2 arguments.'
         exit 1
     fi
@@ -53,7 +53,7 @@ print_colour () {
 
 # Prints error text.
 print_error () {
-    if [ $# != 1 ]; then
+    if [ $# -ne 1 ]; then
         echo 'Function print_error() expects 1 argument.'
         exit 1
     fi
@@ -62,7 +62,7 @@ print_error () {
 
 # Prints informational text.
 print_info () {
-    if [ $# != 1 ]; then
+    if [ $# -ne 1 ]; then
         echo 'Function print_info() expects 1 argument.'
         exit 1
     fi
@@ -71,7 +71,7 @@ print_info () {
 
 # Prints section-related text.
 print_section () {
-    if [ $# != 1 ]; then
+    if [ $# -ne 1 ]; then
         echo 'Function print_section() expects 1 argument.'
         exit 1
     fi
@@ -80,7 +80,7 @@ print_section () {
 
 # Prints success text.
 print_success () {
-    if [ $# != 1 ]; then
+    if [ $# -ne 1 ]; then
         echo 'Function print_success() expects 1 argument.'
         exit 1
     fi
@@ -107,7 +107,7 @@ section_check () {
 
 # Returns whether a section eixsts or not.
 section_exists () {
-    if [ $#  != 1 ]; then
+    if [ $# -ne 1 ]; then
         print_error 'Function section_exists() expects 1 argument.'
         exit 1
     fi
@@ -121,7 +121,7 @@ section_exists () {
 
 # Register a section, so it can be checked by other sections later.
 section_register () {
-    if [ $#  != 1 ]; then
+    if [ $# -ne 1 ]; then
         print_error 'Function section_register() expects 1 argument.'
         exit 1
     fi
