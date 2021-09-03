@@ -193,7 +193,7 @@ package_install () {
 
 section_register 'Pacman'
 file_install pacman/pacman.conf /etc/pacman.conf
-file_install pacman/mirrorlist /etc/pacman.d/mirrorlist
+file_install pacman-mirrorlist/mirrorlist /etc/pacman.d/mirrorlist
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
@@ -201,7 +201,7 @@ if [ "${_laptop}" = 'true' ]; then
     section_register 'Multicast_DNS'
     section_check 'Pacman'
     package_install 'nss-mdns'
-    file_install nss-mdns/nsswitch.conf /etc/nsswitch.conf
+    file_install filesystem/nsswitch.conf /etc/nsswitch.conf
 fi
 
 section_register 'Vim'
