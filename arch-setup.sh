@@ -148,6 +148,34 @@ section_register () {
 # Fuctions for common tasks.
 #
 
+# Install a file, if it is not installed already.
+# Either two -OR- five arguments can be provided.
+# - Argument 1 ($1): Source file.
+# - Argument 2 ($2): Full path of target file.
+# Either all the following arguments must be provided -OR- the default will apply.
+# - Argument 3 ($3): Owner of file.           } Default: root
+# - Argument 4 ($4): Group of file.           } Default: root
+# - Argument 5 ($5): Permission mode of file. } Default: 0644
+file_install () {
+    if [ $# -ne 2 ] && [ $# -ne 5 ]; then
+        print_error 'Function file_install() expects either 2 or 5 arguments.'
+        exit 1
+    fi
+    file_owner='root'
+    file_group='root'
+    file_mode='0644'
+    if [ $# -eq 5 ]; then
+        file_owner="$3"
+        file_group="$4"
+        file_mode="$5"
+    fi
+    install --backup=numbered --compare \
+        --owner="${file_owner}" \
+        --group="${file_group}" \
+        --mode="${file_mode}" \
+        "$1" "$2" || exit
+}
+
 # Install a package, if it is not installed alraedy.
 package_install () {
     if [ $# -ne 1 ]; then
@@ -164,10 +192,8 @@ package_install () {
 #
 
 section_register 'Pacman'
-install --backup=numbered --compare --owner=root --group=root --mode=0644 \
-    pacman/pacman.conf /etc/pacman.conf || exit
-install --backup=numbered --compare --owner=root --group=root --mode=0644 \
-    pacman/mirrorlist /etc/pacman.d/mirrorlist || exit
+file_install pacman/pacman.conf /etc/pacman.conf
+file_install pacman/mirrorlist /etc/pacman.d/mirrorlist
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
