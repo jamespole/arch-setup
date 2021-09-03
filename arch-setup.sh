@@ -30,11 +30,16 @@ fi
 # Set certain variables depending on environment.
 #
 
-
 if [[ ${HOSTNAME} == *-laptop ]]; then
     _laptop='true'
 else
-    _laptop=0
+    _laptop=''
+fi
+
+if [[ ${HOSTNAME} == *.pole.net.nz ]]; then
+    _server='true'
+else
+    _server=''
 fi
 
 #
@@ -248,10 +253,24 @@ if [ "${_laptop}" = 'true' ]; then
     package_install 'transmission-gtk'
 fi
 
+if [ "${_server}" = 'true' ]; then
+    section_register 'Server_Packages'
+    section_check 'Common_Packages'
+    section_check 'Pacman'
+    package_install 'apache'
+    package_install 'certbot'
+    package_install 'postfix'
+    package_install 'screen'
+    package_install 'sigal'
+fi
+
 section_register 'Locale'
 section_check 'Common_Packages'
 if [ "${_laptop}" = 'true' ]; then
     section_check 'Laptop_Packages'
+fi
+if [ "${_server}" = 'true' ]; then
+    section_check 'Server_Packages'
 fi
 file_install glibc/locale.gen /etc/locale.gen
 file_install systemd/locale.conf /etc/locale.conf
