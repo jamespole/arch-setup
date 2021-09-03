@@ -239,6 +239,7 @@ package_install 'git'
 package_install 'jhead'
 package_install 'man-db'
 package_install 'man-pages'
+package_install 'shellcheck'
 
 if [ "${_laptop}" = 'true' ]; then
     section_register 'Laptop_Packages'
@@ -258,7 +259,6 @@ if [ "${_laptop}" = 'true' ]; then
     package_install 'libreoffice-fresh-en-gb'
     package_install 'nautilus'
     package_install 'sane-airscan'
-    package_install 'shellcheck'
     package_install 'signal-desktop'
     package_install 'simple-scan'
     package_install 'sushi'
