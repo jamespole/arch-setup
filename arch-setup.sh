@@ -197,6 +197,13 @@ file_install pacman/mirrorlist /etc/pacman.d/mirrorlist
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
+if [ "${_laptop}" = 'true' ]; then
+    section_register 'Multicast_DNS'
+    section_check 'Pacman'
+    package_install 'nss-mdns'
+    file_install nss-mdns/nsswitch.conf /etc/nsswitch.conf
+fi
+
 section_register 'Vim'
 section_check 'Pacman'
 if [ "${_laptop}" = 'true' ]; then
@@ -217,6 +224,8 @@ package_install 'man-pages'
 
 if [ "${_laptop}" = 'true' ]; then
     section_register 'Laptop_Packages'
+    section_check 'Common_Packages'
+    section_check 'Multicast_DNS'
     section_check 'Pacman'
     package_install 'cups'
     package_install 'firefox'
