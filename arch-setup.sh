@@ -221,6 +221,11 @@ if [ "${_server}" = 'true' ]; then
     postconf 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd'
 fi
 
+section_register 'Sudo'
+section_check 'Pacman'
+package_install 'sudo'
+file_install sudo/sudoers /etc/sudoers root root 0440
+
 section_register 'Vim'
 section_check 'Pacman'
 if [ "${_laptop}" = 'true' ]; then
