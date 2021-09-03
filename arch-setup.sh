@@ -209,6 +209,18 @@ if [ "${_laptop}" = 'true' ]; then
     file_install filesystem/nsswitch.conf /etc/nsswitch.conf
 fi
 
+if [ "${_server}" = 'true' ]; then
+    section_register 'Postfix'
+    section_check 'Pacman'
+    package_install 'postfix'
+    postconf 'myorigin = $mydomain'
+    postconf 'smtp_sasl_auth_enable = yes'
+    postconf 'smtp_tls_security_level = encrypt'
+    postconf 'smtp_sasl_tls_security_options = noanonymous'
+    postconf 'relayhost = [smtp.fastmail.com]:submission'
+    postconf 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd'
+fi
+
 section_register 'Vim'
 section_check 'Pacman'
 if [ "${_laptop}" = 'true' ]; then
@@ -259,7 +271,6 @@ if [ "${_server}" = 'true' ]; then
     section_check 'Pacman'
     package_install 'apache'
     package_install 'certbot'
-    package_install 'postfix'
     package_install 'screen'
     package_install 'sigal'
 fi
