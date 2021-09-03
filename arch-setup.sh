@@ -214,6 +214,7 @@ fi
 
 section_register 'Common_Packages'
 section_check 'Pacman'
+section_check 'Vim'
 package_install 'bash-completion'
 package_install 'borg'
 package_install 'fdupes'
@@ -246,5 +247,14 @@ if [ "${_laptop}" = 'true' ]; then
     package_install 'sushi'
     package_install 'transmission-gtk'
 fi
+
+section_register 'Locale'
+section_check 'Common_Packages'
+if [ "${_laptop}" = 'true' ]; then
+    section_check 'Laptop_Packages'
+fi
+file_install glibc/locale.gen /etc/locale.gen
+file_install systemd/locale.conf /etc/locale.conf
+locale-gen || exit
 
 print_info 'Finished.'
