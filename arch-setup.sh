@@ -202,6 +202,10 @@ file_install pacman-mirrorlist/mirrorlist /etc/pacman.d/mirrorlist
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
+section_register 'NetworkManager'
+section_check 'Pacman'
+package_install 'networkmanager'
+
 if [ "${_laptop}" = 'true' ]; then
     section_register 'Multicast_DNS'
     section_check 'Pacman'
@@ -211,6 +215,7 @@ fi
 
 if [ "${_server}" = 'true' ]; then
     section_register 'Postfix'
+    section_check 'NetworkManager'
     section_check 'Pacman'
     package_install 'postfix'
     postconf 'myorigin = $mydomain'
@@ -235,12 +240,14 @@ else
 fi
 
 section_register 'Common_Packages'
+section_check 'NetworkManager'
 section_check 'Pacman'
 section_check 'Vim'
 package_install 'bash-completion'
 package_install 'borg'
 package_install 'fdupes'
 package_install 'git'
+package_install 'iperf'
 package_install 'jhead'
 package_install 'man-db'
 package_install 'man-pages'
@@ -250,6 +257,7 @@ if [ "${_laptop}" = 'true' ]; then
     section_register 'Laptop_Packages'
     section_check 'Common_Packages'
     section_check 'Multicast_DNS'
+    section_check 'NetworkManager'
     section_check 'Pacman'
     package_install 'cups'
     package_install 'firefox'
@@ -274,6 +282,7 @@ fi
 if [ "${_server}" = 'true' ]; then
     section_register 'Server_Packages'
     section_check 'Common_Packages'
+    section_check 'NetworkManager'
     section_check 'Pacman'
     package_install 'apache'
     package_install 'certbot'
