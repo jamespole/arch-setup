@@ -267,6 +267,7 @@ if [ "${_laptop}" = 'true' ]; then
     package_install 'signal-desktop'
     package_install 'simple-scan'
     package_install 'sushi'
+    package_install 'telegram-desktop'
     package_install 'transmission-gtk'
 fi
 
