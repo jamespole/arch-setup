@@ -206,6 +206,14 @@ section_register 'NetworkManager'
 section_check 'Pacman'
 package_install 'networkmanager'
 
+if [ "${_server}" = 'true' ]; then
+    section_register 'Apache'
+    section_check 'NetworkManager'
+    section_check 'Pacman'
+    package_install 'apache'
+    file_install apache/httpd.conf /etc/httpd/conf/httpd.conf
+fi
+
 if [ "${_laptop}" = 'true' ]; then
     section_register 'Multicast_DNS'
     section_check 'Pacman'
@@ -247,6 +255,8 @@ package_install 'bash-completion'
 package_install 'borg'
 package_install 'fdupes'
 package_install 'git'
+package_install 'hunspell'
+package_install 'hunspell-en_gb'
 package_install 'iperf'
 package_install 'jhead'
 package_install 'man-db'
@@ -284,7 +294,6 @@ if [ "${_server}" = 'true' ]; then
     section_check 'Common_Packages'
     section_check 'NetworkManager'
     section_check 'Pacman'
-    package_install 'apache'
     package_install 'certbot'
     package_install 'screen'
     package_install 'sigal'
