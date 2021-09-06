@@ -38,6 +38,11 @@ else
 fi
 
 if [[ ${HOSTNAME} == *.pole.net.nz ]]; then
+    _certbot_domains='
+        pole.net.nz
+        james.pole.net.nz
+        neptune.pole.net.nz
+        www.pole.net.nz'
     _nmconnections='Prodigi'
     _server='true'
 else
@@ -217,11 +222,33 @@ systemctl restart NetworkManager.service || exit
 nm-online || exit
 
 if [ "${_server}" = 'true' ]; then
+
+    section_register 'Certbot'
+    section_check 'NetworkManager'
+    section_check 'Pacman'
+    package_install 'certbot'
+    systemctl stop httpd.service || exit
+    for certbot_domain in ${_certbot_domains}; do
+        if [ ! -d "/etc/letsencrypt/live/${certbot_domain}" ]; then
+            certbot certonly --standalone \
+                --non-interactive --agree-tos --email 'james@pole.net.nz' \
+                --domain "${certbot_domain}" || exit
+        fi
+    done
+    file_install certbot/certbot.service /etc/systemd/system/certbot.service || exit
+    file_install certbot/certbot.timer /etc/systemd/system/certbot.timer || exit
+    systemctl enable certbot.timer || exit
+    systemctl restart certbot.timer || exit
+
     section_register 'Apache'
+    section_check 'Certbot'
     section_check 'NetworkManager'
     section_check 'Pacman'
     package_install 'apache'
     file_install apache/httpd.conf /etc/httpd/conf/httpd.conf
+    systemctl enable httpd.service || exit
+    systemctl restart httpd.service || exit
+
 fi
 
 if [ "${_laptop}" = 'true' ]; then
@@ -236,12 +263,12 @@ if [ "${_server}" = 'true' ]; then
     section_check 'NetworkManager'
     section_check 'Pacman'
     package_install 'postfix'
-    postconf 'myorigin = $mydomain'
-    postconf 'smtp_sasl_auth_enable = yes'
-    postconf 'smtp_tls_security_level = encrypt'
-    postconf 'smtp_sasl_tls_security_options = noanonymous'
-    postconf 'relayhost = [smtp.fastmail.com]:submission'
-    postconf 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd'
+    postconf 'myorigin = $mydomain' || exit
+    postconf 'smtp_sasl_auth_enable = yes' || exit
+    postconf 'smtp_tls_security_level = encrypt' || exit
+    postconf 'smtp_sasl_tls_security_options = noanonymous' || exit
+    postconf 'relayhost = [smtp.fastmail.com]:submission' || exit
+    postconf 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd' || exit
 fi
 
 section_register 'Sudo'
