@@ -1,0 +1,14 @@
+[connection]
+id=Prodigi
+uuid=0b2e92f6-7419-45d0-8a0a-b0fb1bd76dc4
+type=ethernet
+permissions=
+
+[ethernet]
+mac-address=CA:0D:04:1F:16:D7
+
+[ipv4]
+addresses=103.121.34.135/25
+gateway=103.121.34.129
+dns=103.121.34.31;103.121.34.32
+method=manual

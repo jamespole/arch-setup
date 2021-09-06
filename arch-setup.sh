@@ -32,11 +32,13 @@ fi
 
 if [[ ${HOSTNAME} == *-laptop ]]; then
     _laptop='true'
+    _nmconnections='Anderson2 James-Phone'
 else
     _laptop=''
 fi
 
 if [[ ${HOSTNAME} == *.pole.net.nz ]]; then
+    _nmconnections='Prodigi'
     _server='true'
 else
     _server=''
@@ -205,6 +207,14 @@ pacman --files --noconfirm --refresh --quiet || exit
 section_register 'NetworkManager'
 section_check 'Pacman'
 package_install 'networkmanager'
+for nmconnection in ${_nmconnections}; do
+    file_install "networkmanager/${nmconnection}.nmconnection" \
+        "/etc/NetworkManager/system-connections/${nmconnection}.nmconnection" \
+        root root 0600
+done
+systemctl enable NetworkManager.service || exit
+systemctl restart NetworkManager.service || exit
+nm-online || exit
 
 if [ "${_server}" = 'true' ]; then
     section_register 'Apache'
