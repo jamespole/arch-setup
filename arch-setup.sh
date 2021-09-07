@@ -302,10 +302,15 @@ else
     package_install 'vim'
 fi
 
+#
+# Section: Common_Packages
+#
+
 section_register 'Common_Packages'
 section_check 'NetworkManager'
 section_check 'Pacman'
 section_check 'Vim'
+
 package_install 'bash-completion'
 package_install 'borg'
 package_install 'fdupes'
@@ -316,6 +321,8 @@ package_install 'iperf'
 package_install 'jhead'
 package_install 'man-db'
 package_install 'man-pages'
+package_install 'rclone'
+package_install 'rmlint'
 package_install 'shellcheck'
 
 if [ "${_laptop}" = 'true' ]; then
