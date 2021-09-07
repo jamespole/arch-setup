@@ -209,16 +209,34 @@ file_install pacman-mirrorlist/mirrorlist /etc/pacman.d/mirrorlist
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
+#
+# Section: NetworkManager
+#
+
 section_register 'NetworkManager'
 section_check 'Pacman'
 package_install 'networkmanager'
+
+# Install NetworkManager connection files.
 for nmconnection in ${_nmconnections}; do
     file_install "networkmanager/${nmconnection}.nmconnection" \
         "/etc/NetworkManager/system-connections/${nmconnection}.nmconnection" \
         root root 0600
 done
+
+# Ensure systemd-networkd is stopped and disabled. We need to do this to ensure
+# it does not conflict with NetworkManager.
+systemctl stop systemd-networkd.service || exit
+systemctl disable systemd-networkd.service || exit
+
+# Ensure NetworkManager is enabled and restarted. Note a restart (not a reload)
+# is required. Reloading NetworkManager does not activate any new or updated
+# NetworkManager connection files.
 systemctl enable NetworkManager.service || exit
 systemctl restart NetworkManager.service || exit
+
+# Before we proceed with the rest of this script, check that NetworkManager has
+# obtained an internet connection.
 nm-online || exit
 
 if [ "${_server}" = 'true' ]; then
