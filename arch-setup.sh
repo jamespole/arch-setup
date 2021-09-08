@@ -215,6 +215,7 @@ pacman --files --noconfirm --refresh --quiet || exit
 
 section_register 'systemd-resolved'
 file_install systemd/resolved.conf /etc/systemd/resolved.conf
+ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 systemctl enable systemd-resolved.service || exit
 systemctl restart systemd-resolved.service || exit
 
