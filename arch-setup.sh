@@ -216,6 +216,7 @@ pacman --files --noconfirm --refresh --quiet || exit
 if [ "${_laptop}" = 'true' ]; then
     section_register 'CRDA'
     section_check 'Pacman'
+    package_install 'crda'
     file_install wireless-regdom/wireless-regdom /etc/conf.d/wireless-regdom
 fi
 
