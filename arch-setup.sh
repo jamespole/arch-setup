@@ -210,11 +210,21 @@ pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
 #
+# Section: systemd-resolved
+#
+
+section_register 'systemd-resolved'
+file_install systemd/resolved.conf /etc/systemd/resolved.conf
+systemctl enable systemd-resolved.service || exit
+systemctl restart systemd-resolved.service || exit
+
+#
 # Section: NetworkManager
 #
 
 section_register 'NetworkManager'
 section_check 'Pacman'
+section_check 'systemd-resolved'
 package_install 'networkmanager'
 
 # Install NetworkManager connection files.
@@ -244,6 +254,7 @@ if [ "${_server}" = 'true' ]; then
     section_register 'Certbot'
     section_check 'NetworkManager'
     section_check 'Pacman'
+    section_check 'systemd-resolved'
     package_install 'certbot'
     systemctl stop httpd.service || exit
     for certbot_domain in ${_certbot_domains}; do
@@ -262,6 +273,7 @@ if [ "${_server}" = 'true' ]; then
     section_check 'Certbot'
     section_check 'NetworkManager'
     section_check 'Pacman'
+    section_check 'systemd-resolved'
     package_install 'apache'
     file_install apache/httpd.conf /etc/httpd/conf/httpd.conf
     systemctl enable httpd.service || exit
@@ -280,6 +292,7 @@ if [ "${_server}" = 'true' ]; then
     section_register 'Postfix'
     section_check 'NetworkManager'
     section_check 'Pacman'
+    section_check 'systemd-resolved'
     package_install 'postfix'
     postconf 'myorigin = $mydomain' || exit
     postconf 'smtp_sasl_auth_enable = yes' || exit
@@ -309,6 +322,7 @@ fi
 section_register 'Common_Packages'
 section_check 'NetworkManager'
 section_check 'Pacman'
+section_check 'systemd-resolved'
 section_check 'Vim'
 
 package_install 'bash-completion'
@@ -331,6 +345,7 @@ if [ "${_laptop}" = 'true' ]; then
     section_check 'Multicast_DNS'
     section_check 'NetworkManager'
     section_check 'Pacman'
+    section_check 'systemd-resolved'
     package_install 'cups'
     package_install 'firefox'
     package_install 'firefox-i18n-en-gb'
@@ -356,6 +371,7 @@ if [ "${_server}" = 'true' ]; then
     section_check 'Common_Packages'
     section_check 'NetworkManager'
     section_check 'Pacman'
+    section_check 'systemd-resolved'
     package_install 'certbot'
     package_install 'screen'
     package_install 'sigal'
