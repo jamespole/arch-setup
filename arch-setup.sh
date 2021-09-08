@@ -294,6 +294,22 @@ file_install systemd/timesyncd.conf /etc/systemd/timesyncd.conf
 systemctl enable systemd-timesyncd.service || exit
 systemctl restart systemd-timesyncd.service || exit
 
+#
+# Section: OpenSSH
+# Documentation: https://wiki.archlinux.org/title/OpenSSH
+#
+
+section_register 'OpenSSH'
+section_check 'Manual_Pages'
+section_check 'NetworkManager'
+section_check 'Pacman'
+section_check 'systemd-resolved'
+package_install 'openssh'
+package_install 'ssh-audit'
+file_install openssh/sshd_config /etc/ssh/sshd_config
+systemctl enable sshd.service
+systemctl restart sshd.service
+
 if [ "${_server}" = 'true' ]; then
 
     section_register 'Certbot'
