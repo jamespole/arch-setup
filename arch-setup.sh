@@ -210,11 +210,23 @@ pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
 #
+# Section: Manual_Pages
+#
+
+section_register 'Manual_Pages'
+section_check 'Pacman'
+package_install 'man-db'
+package_install 'man-pages'
+systemctl enable man-db.timer || exit
+systemctl restart man-db.timer || exit
+
+#
 # Section: CRDA
 #
 
 if [ "${_laptop}" = 'true' ]; then
     section_register 'CRDA'
+    section_check 'Manual_Pages'
     section_check 'Pacman'
     package_install 'crda'
     file_install wireless-regdom/wireless-regdom /etc/conf.d/wireless-regdom
@@ -225,6 +237,7 @@ fi
 #
 
 section_register 'systemd-resolved'
+section_check 'Manual_Pages'
 file_install systemd/resolved.conf /etc/systemd/resolved.conf
 ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || exit
 systemctl enable systemd-resolved.service || exit
@@ -241,6 +254,7 @@ if [ "${_laptop}" = 'true' ]; then
     section_check 'CRDA'
 fi
 
+section_check 'Manual_Pages'
 section_check 'Pacman'
 section_check 'systemd-resolved'
 package_install 'networkmanager'
@@ -272,6 +286,7 @@ nm-online || exit
 #
 
 section_register 'systemd-timesyncd'
+section_check 'Manual_Pages'
 section_check 'NetworkManager'
 section_check 'Pacman'
 section_check 'systemd-resolved'
@@ -302,6 +317,7 @@ if [ "${_server}" = 'true' ]; then
 
     section_register 'Apache'
     section_check 'Certbot'
+    section_check 'Manual_Pages'
     section_check 'NetworkManager'
     section_check 'Pacman'
     section_check 'systemd-resolved'
@@ -329,6 +345,9 @@ fi
 if [ "${_server}" = 'true' ]; then
 
     section_register 'Postfix'
+
+    # Check that Manual_Pages is done, for manual pages.
+    section_check 'Manual_Pages'
 
     # Check that NetworkManager is done, for network connectivity.
     section_check 'NetworkManager'
@@ -377,12 +396,14 @@ if [ "${_server}" = 'true' ]; then
 fi
 
 section_register 'Sudo'
+section_check 'Manual_Pages'
 section_check 'Pacman'
 section_check 'systemd-timesyncd'
 package_install 'sudo'
 file_install sudo/sudoers /etc/sudoers root root 0440
 
 section_register 'Vim'
+section_check 'Manual_Pages'
 section_check 'Pacman'
 if [ "${_laptop}" = 'true' ]; then
     package_install 'gvim'
@@ -395,6 +416,7 @@ fi
 #
 
 section_register 'Common_Packages'
+section_check 'Manual_Pages'
 section_check 'NetworkManager'
 section_check 'Pacman'
 section_check 'systemd-resolved'
@@ -418,6 +440,7 @@ package_install 'shellcheck'
 if [ "${_laptop}" = 'true' ]; then
     section_register 'Laptop_Packages'
     section_check 'Common_Packages'
+    section_check 'Manual_Pages'
     section_check 'Multicast_DNS'
     section_check 'NetworkManager'
     section_check 'Pacman'
@@ -446,6 +469,7 @@ fi
 if [ "${_server}" = 'true' ]; then
     section_register 'Server_Packages'
     section_check 'Common_Packages'
+    section_check 'Manual_Pages'
     section_check 'NetworkManager'
     section_check 'Pacman'
     section_check 'systemd-resolved'
