@@ -210,6 +210,14 @@ pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
 #
+# Section: CRDA
+#
+
+section_register 'CRDA'
+section_check 'Pacman'
+file_install wireless-regdom/wireless-regdom /etc/conf.d/wireless-regdom
+
+#
 # Section: systemd-resolved
 #
 
@@ -224,6 +232,7 @@ systemctl restart systemd-resolved.service || exit
 #
 
 section_register 'NetworkManager'
+section_check 'CRDA'
 section_check 'Pacman'
 section_check 'systemd-resolved'
 package_install 'networkmanager'
