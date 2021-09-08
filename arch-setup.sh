@@ -300,15 +300,37 @@ systemctl restart systemd-timesyncd.service || exit
 #
 
 section_register 'OpenSSH'
+
+# Check that Manual_Pages is done, for manual pages.
 section_check 'Manual_Pages'
+
+# Check that NetworkManager is done, for network connectivity.
 section_check 'NetworkManager'
+
+# Check that Pacman is done, for updated packages.
 section_check 'Pacman'
+
+# Check that systemd-resolved is done, for resolving domain names.
 section_check 'systemd-resolved'
+
+# Check that systemd-timesyncd is done, for timestamps in logs.
+section_check 'systemd-timesyncd'
+
+# Ensure the openssh package is installed.
 package_install 'openssh'
-package_install 'ssh-audit'
+
+# Ensure the sshd configuration is installed.
 file_install openssh/sshd_config /etc/ssh/sshd_config
-systemctl enable sshd.service
-systemctl restart sshd.service
+
+# Ensure the sshd service is enabled and restarted.
+systemctl enable sshd.service || exit
+systemctl restart sshd.service || exit
+
+# Ensure the ssh-audit package is installed, to help audit the configuration.
+package_install 'ssh-audit'
+
+# Run ssh-audit to audit the configuration of the local ssh server.
+ssh-audit --level=warn localhost || exit
 
 if [ "${_server}" = 'true' ]; then
 
