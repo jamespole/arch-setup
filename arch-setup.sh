@@ -250,12 +250,25 @@ systemctl restart NetworkManager.service || exit
 # obtained an internet connection.
 nm-online || exit
 
+#
+# Section: systemd-timesyncd
+#
+
+section_register 'systemd-timesyncd'
+section_check 'NetworkManager'
+section_check 'Pacman'
+section_check 'systemd-resolved'
+file_install systemd/timesyncd.conf /etc/systemd/timesyncd.conf
+systemctl enable systemd-timesyncd.service || exit
+systemctl restart systemd-timesyncd.service || exit
+
 if [ "${_server}" = 'true' ]; then
 
     section_register 'Certbot'
     section_check 'NetworkManager'
     section_check 'Pacman'
     section_check 'systemd-resolved'
+    section_check 'systemd-timesyncd'
     package_install 'certbot'
     systemctl stop httpd.service || exit
     for certbot_domain in ${_certbot_domains}; do
@@ -275,6 +288,7 @@ if [ "${_server}" = 'true' ]; then
     section_check 'NetworkManager'
     section_check 'Pacman'
     section_check 'systemd-resolved'
+    section_check 'systemd-timesyncd'
     package_install 'apache'
     file_install apache/httpd.conf /etc/httpd/conf/httpd.conf
     systemctl enable httpd.service || exit
@@ -294,6 +308,7 @@ if [ "${_server}" = 'true' ]; then
     section_check 'NetworkManager'
     section_check 'Pacman'
     section_check 'systemd-resolved'
+    section_check 'systemd-timesyncd'
     package_install 'postfix'
     postconf 'myorigin = $mydomain' || exit
     postconf 'smtp_sasl_auth_enable = yes' || exit
@@ -305,6 +320,7 @@ fi
 
 section_register 'Sudo'
 section_check 'Pacman'
+section_check 'systemd-timesyncd'
 package_install 'sudo'
 file_install sudo/sudoers /etc/sudoers root root 0440
 
@@ -324,6 +340,7 @@ section_register 'Common_Packages'
 section_check 'NetworkManager'
 section_check 'Pacman'
 section_check 'systemd-resolved'
+section_check 'systemd-timesyncd'
 section_check 'Vim'
 
 package_install 'bash-completion'
@@ -347,6 +364,7 @@ if [ "${_laptop}" = 'true' ]; then
     section_check 'NetworkManager'
     section_check 'Pacman'
     section_check 'systemd-resolved'
+    section_check 'systemd-timesyncd'
     package_install 'cups'
     package_install 'firefox'
     package_install 'firefox-i18n-en-gb'
@@ -373,6 +391,7 @@ if [ "${_server}" = 'true' ]; then
     section_check 'NetworkManager'
     section_check 'Pacman'
     section_check 'systemd-resolved'
+    section_check 'systemd-timesyncd'
     package_install 'certbot'
     package_install 'screen'
     package_install 'sigal'
