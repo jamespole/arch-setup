@@ -345,6 +345,12 @@ if [ "${_server}" = 'true' ]; then
     # Ensure the postfix package is installed.
     package_install 'postfix'
 
+    # Ensure the password file is installed.
+    file_install postfix/sasl_passwd /etc/postfix/sasl_passwd root root 0640
+
+    # Ensure the hashed password file has been generated.
+    postmap /etc/postfix/sasl_passwd
+
     # Ensure the domain name (i.e. pole.net.nz) is used for outgoing mail.
     postconf 'myorigin = $mydomain' || exit
 
@@ -360,7 +366,7 @@ if [ "${_server}" = 'true' ]; then
     # Ensure outgoing mail is relayed via Fastmail.
     postconf 'relayhost = [smtp.fastmail.com]:submission' || exit
 
-    # Ensure that the appropirate password file is used for authentication.
+    # Ensure that the hashed password file is used for authentication.
     postconf 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd' || exit
 
     # Ensure Postfix is enabled and reloaded (activating the configuration
