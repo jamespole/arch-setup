@@ -320,19 +320,54 @@ if [ "${_laptop}" = 'true' ]; then
     file_install filesystem/nsswitch.conf /etc/nsswitch.conf
 fi
 
+#
+# Section: Postfix
+# Documentation: http://www.postfix.org/BASIC_CONFIGURATION_README.html#myorigin
+# Documentation: http://www.postfix.org/SASL_README.html#client_sasl_enable
+#
+
 if [ "${_server}" = 'true' ]; then
+
     section_register 'Postfix'
+
+    # Check that NetworkManager is done, for network connectivity.
     section_check 'NetworkManager'
+
+    # Check that Pacman is done, for updated packages.
     section_check 'Pacman'
+
+    # Check that systemd-resolved is done, for resolving domain names.
     section_check 'systemd-resolved'
+
+    # Check that systemd-timesyncd is done, for timestamps in logs.
     section_check 'systemd-timesyncd'
+
+    # Ensure the postfix package is installed.
     package_install 'postfix'
+
+    # Ensure the domain name (i.e. pole.net.nz) is used for outgoing mail.
     postconf 'myorigin = $mydomain' || exit
+
+    # Ensure client-side SMTP authentication is enabled.
     postconf 'smtp_sasl_auth_enable = yes' || exit
+
+    # Ensure that outgoing mail is delivered over an encyrypted connection.
     postconf 'smtp_tls_security_level = encrypt' || exit
+
+    # Ensure that plaintext passwords can be sent.
     postconf 'smtp_sasl_tls_security_options = noanonymous' || exit
+
+    # Ensure outgoing mail is relayed via Fastmail.
     postconf 'relayhost = [smtp.fastmail.com]:submission' || exit
+
+    # Ensure that the appropirate password file is used for authentication.
     postconf 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd' || exit
+
+    # Ensure Postfix is enabled and reloaded (activating the configuration
+    # defined above). If neccessary, start Postfix.
+    systemctl enable postfix.service || exit
+    systemctl reload-or-restart postfix.service || exit
+
 fi
 
 section_register 'Sudo'
