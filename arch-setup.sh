@@ -213,9 +213,11 @@ pacman --files --noconfirm --refresh --quiet || exit
 # Section: CRDA
 #
 
-section_register 'CRDA'
-section_check 'Pacman'
-file_install wireless-regdom/wireless-regdom /etc/conf.d/wireless-regdom
+if [ "${_laptop}" = 'true' ]; then
+    section_register 'CRDA'
+    section_check 'Pacman'
+    file_install wireless-regdom/wireless-regdom /etc/conf.d/wireless-regdom
+fi
 
 #
 # Section: systemd-resolved
@@ -232,7 +234,12 @@ systemctl restart systemd-resolved.service || exit
 #
 
 section_register 'NetworkManager'
-section_check 'CRDA'
+
+# Only check for CRDA on laptops, because CRDA relates to wireless networking.
+if [ "${_laptop}" = 'true' ]; then
+    section_check 'CRDA'
+fi
+
 section_check 'Pacman'
 section_check 'systemd-resolved'
 package_install 'networkmanager'
