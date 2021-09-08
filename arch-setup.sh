@@ -349,7 +349,7 @@ if [ "${_server}" = 'true' ]; then
     file_install postfix/sasl_passwd /etc/postfix/sasl_passwd root root 0640
 
     # Ensure the hashed password file has been generated.
-    postmap /etc/postfix/sasl_passwd
+    postmap /etc/postfix/sasl_passwd || exit
 
     # Ensure the domain name (i.e. pole.net.nz) is used for outgoing mail.
     postconf 'myorigin = $mydomain' || exit
