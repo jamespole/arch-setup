@@ -300,7 +300,7 @@ systemctl restart systemd-timesyncd.service || exit
 
 section_register 'Timezone'
 section_check 'Pacman'
-ln -sf /usr/share/zoneinfo/Pacific/Auckland /etc/localtime
+ln -sf /usr/share/zoneinfo/Pacific/Auckland /etc/localtime || exit
 
 #
 # Section: OpenSSH
