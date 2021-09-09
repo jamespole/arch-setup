@@ -295,6 +295,14 @@ systemctl enable systemd-timesyncd.service || exit
 systemctl restart systemd-timesyncd.service || exit
 
 #
+# Section: Timezone
+#
+
+section_register 'Timezone'
+section_check 'Pacman'
+ln -sf /usr/share/zoneinfo/Pacific/Auckland /etc/localtime
+
+#
 # Section: OpenSSH
 # Documentation: https://wiki.archlinux.org/title/OpenSSH
 #
