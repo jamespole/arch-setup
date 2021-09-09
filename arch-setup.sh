@@ -38,12 +38,15 @@ else
 fi
 
 if [[ ${HOSTNAME} == *.pole.net.nz ]]; then
-    _certbot_domains='
-        pole.net.nz
-        james.pole.net.nz
-        neptune.pole.net.nz
-        www.pole.net.nz'
-    _nmconnections='Prodigi'
+    if [[ ${HOSTNAME} == neptune.pole.net.nz ]]; then
+        _certbot_domains='
+            pole.net.nz
+            james.pole.net.nz
+            neptune.pole.net.nz
+            www.pole.net.nz'
+        _nmconnections='Prodigi'
+        _qemu_guest='true'
+    fi
     _server='true'
 else
     _server=''
@@ -208,6 +211,18 @@ file_install pacman/pacman.conf /etc/pacman.conf
 file_install pacman-mirrorlist/mirrorlist /etc/pacman.d/mirrorlist
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
+
+#
+# Section: QEMU_Guest_Agent
+#
+
+if [ "${_qemu_guest}" = 'true' ]; then
+    section_register 'QEMU_Guest_Agent'
+    section_check 'Pacman'
+    package_install 'qemu-guest-agent'
+    systemctl enable qemu-guest-agent.service
+    systemctl restart qemu-guest-agent.service
+fi
 
 #
 # Section: Manual_Pages
