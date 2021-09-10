@@ -236,6 +236,22 @@ systemctl enable man-db.timer || exit
 systemctl restart man-db.timer || exit
 
 #
+# Section: GRUB
+#
+
+if [[ "$(uname -m)" = 'x86_64' ]]; then
+    section_register 'GRUB'
+    section_check 'Pacman'
+    package_install 'grub'
+    if [ -d /sys/firmware/efi ]; then
+        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB || exit
+    else
+        grub-install --target i386-pc /dev/sda || exit
+    fi
+    grub-mkconfig -o /boot/grub/grub.cfg || exit
+fi
+
+#
 # Section: CRDA
 #
 
