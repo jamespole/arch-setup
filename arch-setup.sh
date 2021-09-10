@@ -225,6 +225,17 @@ if [ "${_qemu_guest}" = 'true' ]; then
 fi
 
 #
+# Section: Microcode
+#
+
+# Only run this section on x86-64 hosts.
+if [[ "$(uname -m)" = 'x86_64' ]] && [ "${_qemu_guest}" != 'true' ]; then
+    section_register 'Microcode'
+    section_check 'Pacman'
+    package_install 'intel-ucode'
+fi
+
+#
 # Section: Manual_Pages
 #
 
@@ -239,16 +250,37 @@ systemctl restart man-db.timer || exit
 # Section: GRUB
 #
 
+# Only run this section on x86-64 machines.
 if [[ "$(uname -m)" = 'x86_64' ]]; then
+
     section_register 'GRUB'
-    section_check 'Pacman'
-    package_install 'grub'
-    if [ -d /sys/firmware/efi ]; then
-        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB || exit
-    else
-        grub-install --target i386-pc /dev/sda || exit
+
+    # If this machine is not a guest, check that Microcode is done.
+    if [ "${_qemu_guest}" != 'true' ]; then
+        section_check 'Microcode'
     fi
+
+    section_check 'Pacman'
+
+    package_install 'grub'
+
+    # Install GRUB into the appropirate place.
+    if [ -d /sys/firmware/efi ]; then
+
+        # For machines using EFI, install into the EFI partition.
+        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB || exit
+
+    else
+
+        # For machines not using EFI, install into the boot sector of the first
+        # hard drive.
+        grub-install --target i386-pc /dev/sda || exit
+
+    fi
+
+    # Configure the GRUB boot loader.
     grub-mkconfig -o /boot/grub/grub.cfg || exit
+
 fi
 
 #
