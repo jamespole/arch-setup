@@ -220,8 +220,8 @@ if [ "${_qemu_guest}" = 'true' ]; then
     section_register 'QEMU_Guest_Agent'
     section_check 'Pacman'
     package_install 'qemu-guest-agent'
-    systemctl enable qemu-guest-agent.service
-    systemctl restart qemu-guest-agent.service
+    systemctl enable qemu-guest-agent.service || exit
+    systemctl restart qemu-guest-agent.service || exit
 fi
 
 #
