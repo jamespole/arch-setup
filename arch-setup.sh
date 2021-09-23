@@ -31,12 +31,14 @@ fi
 #
 
 if [[ ${HOSTNAME} == *-laptop ]]; then
-    _laptop='true'
+    _gui='true'
+    _wireless='true'
     _nmconnections='Anderson2 James-Phone'
 fi
 
 if [[ ${HOSTNAME} == *-rpi ]]; then
-    _sbc='true'
+    _gui='true'
+    _wireless='true'
     _nmconnections='Anderson2'
 fi
 
@@ -292,7 +294,7 @@ fi
 # Section: CRDA
 #
 
-if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
+if [ "${_wireless}" = 'true' ]; then
     section_register 'CRDA'
     section_check 'Manual_Pages'
     section_check 'Pacman'
@@ -317,8 +319,8 @@ systemctl restart systemd-resolved.service || exit
 
 section_register 'NetworkManager'
 
-# Only check for CRDA on laptops, because CRDA relates to wireless networking.
-if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
+# Only check for CRDA on wireless devices, because CRDA relates to wireless networking.
+if [ "${_wireless}" = 'true' ]; then
     section_check 'CRDA'
 fi
 
@@ -443,7 +445,7 @@ if [ "${_server}" = 'true' ]; then
 
 fi
 
-if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
+if [ "${_wireless}" = 'true' ]; then
     section_register 'Multicast_DNS'
     section_check 'Pacman'
     package_install 'nss-mdns'
@@ -519,7 +521,7 @@ file_install sudo/sudoers /etc/sudoers root root 0440
 section_register 'Vim'
 section_check 'Manual_Pages'
 section_check 'Pacman'
-if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
+if [ "${_gui}" = 'true' ]; then
     package_install 'gvim'
 else
     package_install 'vim'
@@ -553,8 +555,8 @@ if [[ "$(uname -m)" = 'x86_64' ]]; then
 	package_install 'shellcheck'
 fi
 
-if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
-    section_register 'Laptop_Packages'
+if [ "${_gui}" = 'true' ]; then
+    section_register 'GUI_Packages'
     section_check 'Common_Packages'
     section_check 'Manual_Pages'
     section_check 'Multicast_DNS'
@@ -600,8 +602,8 @@ fi
 
 section_register 'Locale'
 section_check 'Common_Packages'
-if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
-    section_check 'Laptop_Packages'
+if [ "${_gui}" = 'true' ]; then
+    section_check 'GUI_Packages'
 fi
 if [ "${_server}" = 'true' ]; then
     section_check 'Server_Packages'
