@@ -598,6 +598,7 @@ if [ "${_server}" = 'true' ]; then
     package_install 'certbot'
     package_install 'screen'
     package_install 'sigal'
+    package_install 'znc'
 fi
 
 section_register 'Locale'
