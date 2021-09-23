@@ -1,0 +1,3 @@
+Server = http://au.mirror.archlinuxarm.org/$arch/$repo
+Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo
+Server = http://mirror.archlinuxarm.org/$arch/$repo

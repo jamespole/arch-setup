@@ -33,8 +33,11 @@ fi
 if [[ ${HOSTNAME} == *-laptop ]]; then
     _laptop='true'
     _nmconnections='Anderson2 James-Phone'
-else
-    _laptop=''
+fi
+
+if [[ ${HOSTNAME} == *-rpi ]]; then
+    _sbc ='true'
+    _nmconnections='Anderson2'
 fi
 
 if [[ ${HOSTNAME} == *.pole.net.nz ]]; then
@@ -48,8 +51,6 @@ if [[ ${HOSTNAME} == *.pole.net.nz ]]; then
         _qemu_guest='true'
     fi
     _server='true'
-else
-    _server=''
 fi
 
 #
@@ -208,7 +209,11 @@ package_install () {
 
 section_register 'Pacman'
 file_install pacman/pacman.conf /etc/pacman.conf
-file_install pacman-mirrorlist/mirrorlist /etc/pacman.d/mirrorlist
+if [[ "$(uname -m)" = 'aarch64' ]]; then
+    file_install pacman-mirrorlist/mirrorlist.arm /etc/pacman.d/mirrorlist
+else
+    file_install pacman-mirrorlist/mirrorlist /etc/pacman.d/mirrorlist
+fi
 pacman --sync --refresh --sysupgrade --quiet --noconfirm || exit
 pacman --files --noconfirm --refresh --quiet || exit
 
@@ -287,7 +292,7 @@ fi
 # Section: CRDA
 #
 
-if [ "${_laptop}" = 'true' ]; then
+if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     section_register 'CRDA'
     section_check 'Manual_Pages'
     section_check 'Pacman'
@@ -313,7 +318,7 @@ systemctl restart systemd-resolved.service || exit
 section_register 'NetworkManager'
 
 # Only check for CRDA on laptops, because CRDA relates to wireless networking.
-if [ "${_laptop}" = 'true' ]; then
+if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     section_check 'CRDA'
 fi
 
@@ -438,7 +443,7 @@ if [ "${_server}" = 'true' ]; then
 
 fi
 
-if [ "${_laptop}" = 'true' ]; then
+if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     section_register 'Multicast_DNS'
     section_check 'Pacman'
     package_install 'nss-mdns'
@@ -514,7 +519,7 @@ file_install sudo/sudoers /etc/sudoers root root 0440
 section_register 'Vim'
 section_check 'Manual_Pages'
 section_check 'Pacman'
-if [ "${_laptop}" = 'true' ]; then
+if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     package_install 'gvim'
 else
     package_install 'vim'
@@ -542,9 +547,13 @@ package_install 'iperf'
 package_install 'jhead'
 package_install 'rclone'
 package_install 'rmlint'
-package_install 'shellcheck'
 
-if [ "${_laptop}" = 'true' ]; then
+# Shellcheck is not availiable on ARM.
+if [[ "$(uname -m)" = 'x86_64' ]]; then
+	package_install 'shellcheck'
+fi
+
+if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     section_register 'Laptop_Packages'
     section_check 'Common_Packages'
     section_check 'Manual_Pages'
@@ -588,7 +597,7 @@ fi
 
 section_register 'Locale'
 section_check 'Common_Packages'
-if [ "${_laptop}" = 'true' ]; then
+if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     section_check 'Laptop_Packages'
 fi
 if [ "${_server}" = 'true' ]; then
