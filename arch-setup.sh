@@ -36,7 +36,7 @@ if [[ ${HOSTNAME} == *-laptop ]]; then
 fi
 
 if [[ ${HOSTNAME} == *-rpi ]]; then
-    _sbc ='true'
+    _sbc='true'
     _nmconnections='Anderson2'
 fi
 
@@ -570,16 +570,18 @@ if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     package_install 'gnome-boxes'
     package_install 'gnome-terminal'
     package_install 'hplip'
-    package_install 'intel-media-sdk'
     package_install 'libreoffice-fresh'
     package_install 'libreoffice-fresh-en-gb'
     package_install 'nautilus'
     package_install 'sane-airscan'
-    package_install 'signal-desktop'
     package_install 'simple-scan'
     package_install 'sushi'
     package_install 'telegram-desktop'
     package_install 'transmission-gtk'
+    if [[ "$(uname -m)" = 'x86_64' ]]; then
+        package_install 'intel-media-sdk'
+        package_install 'signal-desktop'
+    fi
 fi
 
 if [ "${_server}" = 'true' ]; then
