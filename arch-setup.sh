@@ -563,6 +563,7 @@ if [ "${_laptop}" = 'true' ] || [ "${_sbc}" = 'true' ]; then
     section_check 'systemd-resolved'
     section_check 'systemd-timesyncd'
     package_install 'cups'
+    package_install 'discord'
     package_install 'firefox'
     package_install 'firefox-i18n-en-gb'
     package_install 'firefox-ublock-origin'
