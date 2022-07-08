@@ -530,33 +530,11 @@ section_check 'systemd-resolved'
 section_check 'systemd-timesyncd'
 section_check 'Vim'
 
-package_install 'ansible'
 package_install 'bash-completion'
-package_install 'borg'
-package_install 'fdupes'
 package_install 'git'
-package_install 'hunspell'
-package_install 'hunspell-en_gb'
 package_install 'iperf'
-package_install 'jhead'
-package_install 'python-black'
-package_install 'rclone'
-package_install 'rmlint'
-
-# Shellcheck is not availiable on ARM.
-if [[ "$(uname -m)" = 'x86_64' ]]; then
-	package_install 'shellcheck'
-fi
 
 if [ "${_gui}" = 'true' ]; then
-    section_register 'GUI_Packages'
-    section_check 'Common_Packages'
-    section_check 'Manual_Pages'
-    section_check 'Multicast_DNS'
-    section_check 'NetworkManager'
-    section_check 'Pacman'
-    section_check 'systemd-resolved'
-    section_check 'systemd-timesyncd'
     package_install 'cups'
     package_install 'firefox'
     package_install 'firefox-i18n-en-gb'
