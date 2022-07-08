@@ -17,10 +17,6 @@
 # this program. If not, see <https://www.gnu.org/licenses/>.
 #
 
-#
-# Set certain variables depending on environment.
-#
-
 if [[ ${HOSTNAME} == *-laptop ]]; then
     _gui='true'
     _wireless='true'
@@ -45,13 +41,6 @@ if [[ ${HOSTNAME} == *.pole.net.nz ]]; then
     fi
     _server='true'
 fi
-
-#
-# Internal variables.
-#
-
-_sections=''
-_self_name='arch-setup'
 
 #
 # Fuctions for printing coloured output.
@@ -108,52 +97,6 @@ print_success () {
 }
 
 #
-# Functions for creating and checking sections.
-#
-
-# Checks for section(s), and exits with an error if any have not been registered.
-section_check () {
-    if [ $# -eq 0 ]; then
-        print_error 'Function section_check() expects at least 1 argument.'
-        exit 1
-    fi
-    for section_to_check in "$@"; do
-        if ! section_exists "${section_to_check}"; then
-            print_error "Section <${section_to_check}> has not yet been registered."
-            exit 1
-        fi
-    done
-}
-
-# Returns whether a section eixsts or not.
-section_exists () {
-    if [ $# -ne 1 ]; then
-        print_error 'Function section_exists() expects 1 argument.'
-        exit 1
-    fi
-    for section in ${_sections}; do
-        if [ "$1" = "${section}" ]; then
-            return 0
-        fi
-    done
-    return 1
-}
-
-# Register a section, so it can be checked by other sections later.
-section_register () {
-    if [ $# -ne 1 ]; then
-        print_error 'Function section_register() expects 1 argument.'
-        exit 1
-    fi
-    if section_exists "$1"; then
-        print_error "Section <$1> already exists."
-        exit 1
-    fi
-    _sections+=" $1"
-    print_section "Section $1"
-}
-
-#
 # Fuctions for common tasks.
 #
 
@@ -200,7 +143,6 @@ package_install () {
 # Start of sections.
 #
 
-section_register 'Pacman'
 file_install pacman/pacman.conf /etc/pacman.conf
 if [[ "$(uname -m)" = 'aarch64' ]]; then
     file_install pacman-mirrorlist/mirrorlist.arm /etc/pacman.d/mirrorlist
@@ -215,8 +157,6 @@ pacman --files --noconfirm --refresh --quiet || exit
 #
 
 if [ "${_qemu_guest}" = 'true' ]; then
-    section_register 'QEMU_Guest_Agent'
-    section_check 'Pacman'
     package_install 'qemu-guest-agent'
     systemctl enable qemu-guest-agent.service || exit
     systemctl restart qemu-guest-agent.service || exit
@@ -228,8 +168,6 @@ fi
 
 # Only run this section on x86-64 hosts.
 if [[ "$(uname -m)" = 'x86_64' ]] && [ "${_qemu_guest}" != 'true' ]; then
-    section_register 'Microcode'
-    section_check 'Pacman'
     package_install 'intel-ucode'
 fi
 
@@ -237,8 +175,6 @@ fi
 # Section: Manual_Pages
 #
 
-section_register 'Manual_Pages'
-section_check 'Pacman'
 package_install 'man-db'
 package_install 'man-pages'
 systemctl enable man-db.timer || exit
@@ -251,14 +187,10 @@ systemctl restart man-db.timer || exit
 # Only run this section on x86-64 machines.
 if [[ "$(uname -m)" = 'x86_64' ]]; then
 
-    section_register 'GRUB'
-
     # If this machine is not a guest, check that Microcode is done.
     if [ "${_qemu_guest}" != 'true' ]; then
         section_check 'Microcode'
     fi
-
-    section_check 'Pacman'
 
     package_install 'grub'
 
@@ -286,9 +218,6 @@ fi
 #
 
 if [ "${_wireless}" = 'true' ]; then
-    section_register 'CRDA'
-    section_check 'Manual_Pages'
-    section_check 'Pacman'
     package_install 'crda'
     file_install wireless-regdom/wireless-regdom /etc/conf.d/wireless-regdom
 fi
@@ -297,8 +226,6 @@ fi
 # Section: systemd-resolved
 #
 
-section_register 'systemd-resolved'
-section_check 'Manual_Pages'
 file_install systemd/resolved.conf /etc/systemd/resolved.conf
 ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || exit
 systemctl enable systemd-resolved.service || exit
@@ -308,16 +235,11 @@ systemctl restart systemd-resolved.service || exit
 # Section: NetworkManager
 #
 
-section_register 'NetworkManager'
-
 # Only check for CRDA on wireless devices, because CRDA relates to wireless networking.
 if [ "${_wireless}" = 'true' ]; then
     section_check 'CRDA'
 fi
 
-section_check 'Manual_Pages'
-section_check 'Pacman'
-section_check 'systemd-resolved'
 package_install 'networkmanager'
 
 # Install NetworkManager connection files.
@@ -346,11 +268,6 @@ nm-online || exit
 # Section: systemd-timesyncd
 #
 
-section_register 'systemd-timesyncd'
-section_check 'Manual_Pages'
-section_check 'NetworkManager'
-section_check 'Pacman'
-section_check 'systemd-resolved'
 file_install systemd/timesyncd.conf /etc/systemd/timesyncd.conf
 systemctl enable systemd-timesyncd.service || exit
 systemctl restart systemd-timesyncd.service || exit
@@ -402,8 +319,6 @@ if [ "${_server}" = 'true' ]; then
 fi
 
 if [ "${_wireless}" = 'true' ]; then
-    section_register 'Multicast_DNS'
-    section_check 'Pacman'
     package_install 'nss-mdns'
     file_install filesystem/nsswitch.conf /etc/nsswitch.conf
 fi
