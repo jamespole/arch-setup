@@ -18,15 +18,6 @@
 #
 
 #
-# Exit early if not running as root.
-#
-
-if [ "${UID}" -ne 0 ]; then
-    echo 'Run this script as root.'
-    exit 1
-fi
-
-#
 # Set certain variables depending on environment.
 #
 
