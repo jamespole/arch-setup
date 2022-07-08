@@ -355,35 +355,12 @@ file_install systemd/timesyncd.conf /etc/systemd/timesyncd.conf
 systemctl enable systemd-timesyncd.service || exit
 systemctl restart systemd-timesyncd.service || exit
 
-#
-# Section: Timezone
-#
-
-section_register 'Timezone'
-section_check 'Pacman'
 ln -sf /usr/share/zoneinfo/Pacific/Auckland /etc/localtime || exit
 
 #
 # Section: OpenSSH
 # Documentation: https://wiki.archlinux.org/title/OpenSSH
 #
-
-section_register 'OpenSSH'
-
-# Check that Manual_Pages is done, for manual pages.
-section_check 'Manual_Pages'
-
-# Check that NetworkManager is done, for network connectivity.
-section_check 'NetworkManager'
-
-# Check that Pacman is done, for updated packages.
-section_check 'Pacman'
-
-# Check that systemd-resolved is done, for resolving domain names.
-section_check 'systemd-resolved'
-
-# Check that systemd-timesyncd is done, for timestamps in logs.
-section_check 'systemd-timesyncd'
 
 # Ensure the openssh package is installed.
 package_install 'openssh'
@@ -403,11 +380,6 @@ ssh-audit --level=warn localhost || exit
 
 if [ "${_server}" = 'true' ]; then
 
-    section_register 'Certbot'
-    section_check 'NetworkManager'
-    section_check 'Pacman'
-    section_check 'systemd-resolved'
-    section_check 'systemd-timesyncd'
     package_install 'certbot'
     systemctl stop httpd.service || exit
     for certbot_domain in ${_certbot_domains}; do
@@ -422,13 +394,6 @@ if [ "${_server}" = 'true' ]; then
     systemctl enable certbot.timer || exit
     systemctl restart certbot.timer || exit
 
-    section_register 'Apache'
-    section_check 'Certbot'
-    section_check 'Manual_Pages'
-    section_check 'NetworkManager'
-    section_check 'Pacman'
-    section_check 'systemd-resolved'
-    section_check 'systemd-timesyncd'
     package_install 'apache'
     file_install apache/httpd.conf /etc/httpd/conf/httpd.conf
     systemctl enable httpd.service || exit
@@ -450,23 +415,6 @@ fi
 #
 
 if [ "${_server}" = 'true' ]; then
-
-    section_register 'Postfix'
-
-    # Check that Manual_Pages is done, for manual pages.
-    section_check 'Manual_Pages'
-
-    # Check that NetworkManager is done, for network connectivity.
-    section_check 'NetworkManager'
-
-    # Check that Pacman is done, for updated packages.
-    section_check 'Pacman'
-
-    # Check that systemd-resolved is done, for resolving domain names.
-    section_check 'systemd-resolved'
-
-    # Check that systemd-timesyncd is done, for timestamps in logs.
-    section_check 'systemd-timesyncd'
 
     # Ensure the postfix package is installed.
     package_install 'postfix'
@@ -502,33 +450,12 @@ if [ "${_server}" = 'true' ]; then
 
 fi
 
-section_register 'Sudo'
-section_check 'Manual_Pages'
-section_check 'Pacman'
-section_check 'systemd-timesyncd'
 package_install 'sudo'
 file_install sudo/sudoers /etc/sudoers root root 0440
-
-section_register 'Vim'
-section_check 'Manual_Pages'
-section_check 'Pacman'
-if [ "${_gui}" = 'true' ]; then
-    package_install 'gvim'
-else
-    package_install 'vim'
-fi
 
 #
 # Section: Common_Packages
 #
-
-section_register 'Common_Packages'
-section_check 'Manual_Pages'
-section_check 'NetworkManager'
-section_check 'Pacman'
-section_check 'systemd-resolved'
-section_check 'systemd-timesyncd'
-section_check 'Vim'
 
 package_install 'bash-completion'
 package_install 'git'
@@ -560,26 +487,11 @@ if [ "${_gui}" = 'true' ]; then
 fi
 
 if [ "${_server}" = 'true' ]; then
-    section_register 'Server_Packages'
-    section_check 'Common_Packages'
-    section_check 'Manual_Pages'
-    section_check 'NetworkManager'
-    section_check 'Pacman'
-    section_check 'systemd-resolved'
-    section_check 'systemd-timesyncd'
     package_install 'certbot'
     package_install 'screen'
     package_install 'sigal'
 fi
 
-section_register 'Locale'
-section_check 'Common_Packages'
-if [ "${_gui}" = 'true' ]; then
-    section_check 'GUI_Packages'
-fi
-if [ "${_server}" = 'true' ]; then
-    section_check 'Server_Packages'
-fi
 file_install glibc/locale.gen /etc/locale.gen
 file_install systemd/locale.conf /etc/locale.conf
 locale-gen || exit
